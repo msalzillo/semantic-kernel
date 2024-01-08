@@ -1,0 +1,30 @@
+﻿For the text after <<START TEXT>>:
+Is it relevant to taxation?
+If so, business or personal tax? 
+Is it relevant to income tax?
+What is the date of the document with yyyy-mm-dd format? 
+Which jurisdication using ISO Code?
+What is the languages using ISO codes? 
+Is it a form?
+Does it have tables?
+Is it a draft true or false?
+10 word or less Title
+Brief summary in 100 words or less.
+
+Answer in JSON. Follow this schema:
+{
+"tax_relevance" : "boolean"
+"tax_type" : "string"
+"income_tax" : "boolean" ,
+"document_date: "string",
+"jurisdiction": "string",
+"language" : "string",
+"is_form" : "boolean",
+"is_draft" : "boolean",
+"has_tables" : "boolean",
+"title" : "string",
+"summary" : "string"
+}
+
+<<START TEXT>>
+{Text}

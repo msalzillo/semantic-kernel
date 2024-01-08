@@ -465,6 +465,7 @@ public sealed class PineconeClient : IPineconeClient
             throw;
         }
 
+        responseContent = responseContent.Replace("pod_type", "podtype");
         PineconeIndex? indexDescription = JsonSerializer.Deserialize<PineconeIndex>(responseContent, this._jsonSerializerOptions);
 
         if (indexDescription == null)

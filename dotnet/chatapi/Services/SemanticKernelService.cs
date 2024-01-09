@@ -18,7 +18,9 @@ public class SemanticKernelService : ISemanticKernelService
 {
     private const string Endpoint = "https://grafedi-openai.openai.azure.com/";
     private const string ApiKey = "b993eb427a574b859e1d77adc6c4ba0e";
-    private const string Deployment = "grafedi-openai-tester";
+    // private const string Deployment = "grafedi-openai-tester";
+    private const string Deployment = "grafedi-16k";
+    // private const string Deployment = "grafedi-instruct";
     private const string DeploymentEmbedding = "grafedi-embedding";
 
     private const string PineconeEnvironment = "eastus-azure";

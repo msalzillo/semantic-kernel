@@ -1,4 +1,6 @@
-﻿namespace Grafedi.LLM.ChatAPI.Models;
+﻿// Copyright (c) Microsoft. All rights reserved.
+
+namespace Grafedi.LLM.ChatAPI.Models;
 public class CompletionCitation
 {
     public string? Source { get; set; }

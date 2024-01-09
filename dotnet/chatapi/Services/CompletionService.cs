@@ -7,6 +7,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Memory;
 using Newtonsoft.Json.Linq;
+using TiktokenSharp;
 
 namespace Grafedi.LLM.ChatAPI.Services;
 public interface ICompletionService
@@ -33,10 +34,19 @@ public class CompletionService : ICompletionService
             return new AskResponse();
         }
 
+
+        int totalTokens = 0;
         if (request.UserInput != null && this._semanticKernelService.Memory != null)
         {
-            await foreach (MemoryQueryResult memoryResult in this._semanticKernelService.Memory.SearchAsync("grafedi-paytax-us", request.UserInput, limit: 2, minRelevanceScore: 0.8))
+            await foreach (MemoryQueryResult memoryResult in this._semanticKernelService.Memory.SearchAsync("grafedi-paytax-us", request.UserInput, limit: 10, minRelevanceScore: 0.82))
             {
+                totalTokens += this.GetTokenCount(memoryResult.Metadata.Text);
+
+                if (totalTokens > 2500)
+                {
+                    break;
+                }
+
                 string additionalInformationText = $"Additional information: {memoryResult.Metadata.Text}";
                 sb.AppendLine(additionalInformationText);
 
@@ -64,6 +74,7 @@ public class CompletionService : ICompletionService
             }
         }
 
+        // sb.AppendLine("if you live in New Jersey and work in New York, you are required to pay New York income tax. As a non-resident working in New York, you must file a non-resident tax return (Form IT-203) with the state of New York. This is because both New York and New Jersey require that you pay state income taxes in the state where you earn your income.\n\nHowever, when you file your tax return in New Jersey (as a resident), you can claim a credit for the taxes paid to New York, which helps to prevent double taxation of the same income. It's important to file your New York tax return first so you can accurately claim this credit on your New Jersey tax return");
         string addtionalInformation = sb.ToString();
         string skPrompt = string.Empty;
 
@@ -75,6 +86,8 @@ public class CompletionService : ICompletionService
         {
             skPrompt = await File.ReadAllTextAsync("./Prompts/PayrollAdmin.txt").ConfigureAwait(false);
         }
+
+        totalTokens = this.GetTokenCount(skPrompt);
 
         KernelFunction chatFunction = this._semanticKernelService.Kernel.CreateFunctionFromPrompt(skPrompt, new OpenAIPromptExecutionSettings { MaxTokens = 5000, Temperature = 0 });
         KernelArguments arguments = new(new Dictionary<string, object?> { { "userInput", request.UserInput }, { "additonalInformation", addtionalInformation } });
@@ -104,4 +117,11 @@ public class CompletionService : ICompletionService
             }
         }
     }
+    private int GetTokenCount(string text)
+    {
+        TikToken tikToken = TikToken.EncodingForModel("gpt-3.5-turbo");
+        List<int> i = tikToken.Encode(text); //[15339, 1917]
+        return i.Count;
+    }
+
 }

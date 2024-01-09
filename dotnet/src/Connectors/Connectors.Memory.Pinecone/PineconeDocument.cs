@@ -63,7 +63,7 @@ public class PineconeDocument
     ///  to identify the document itself.
     /// </remarks>
     [JsonIgnore]
-    public string? DocumentId => this.Metadata?.TryGetValue("document_Id", out var docId) == true ? docId.ToString() : null;
+    public string? DocumentId => this.Metadata?.TryGetValue("document_Id", out var docId) == true ? docId.ToString() : this.Id;
 
     /// <summary>
     /// The source ID, used to identify the source text this document was created from.
